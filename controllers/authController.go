@@ -1,6 +1,10 @@
 package controllers
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"github.com/cryptus-neoxys/go-spa-jwt/models"
+	"github.com/gofiber/fiber/v2"
+	"golang.org/x/crypto/bcrypt"
+)
 
 func Register(c *fiber.Ctx) error {
 	var data map[string]string
@@ -8,5 +12,14 @@ func Register(c *fiber.Ctx) error {
 	if err := c.BodyParser(&data); err != nil {
 		return err;
 	}
-	return c.JSON(data)
+
+	password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 12)
+
+	user := models.User{
+		Name: data["name"],
+		Email: data["email"],
+		Password: password,
+	}
+
+	return c.JSON(user)
 }
