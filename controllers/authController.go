@@ -18,14 +18,14 @@ func Register(c *fiber.Ctx) error {
 	var data map[string]string
 
 	if err := c.BodyParser(&data); err != nil {
-		return err;
+		return err
 	}
 
 	password, _ := bcrypt.GenerateFromPassword([]byte(data["password"]), 12)
 
 	user := models.User{
-		Name: data["name"],
-		Email: data["email"],
+		Name:     data["name"],
+		Email:    data["email"],
 		Password: password,
 	}
 
@@ -38,7 +38,7 @@ func Login(c *fiber.Ctx) error {
 	var data map[string]string
 
 	if err := c.BodyParser(&data); err != nil {
-		return err;
+		return err
 	}
 
 	var user models.User
@@ -60,7 +60,7 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.StandardClaims{
-		Issuer: strconv.Itoa(user.Id),
+		Issuer:    strconv.Itoa(user.Id),
 		ExpiresAt: time.Now().Add(time.Hour * 24).Unix(), // 1 day
 	})
 
@@ -74,16 +74,16 @@ func Login(c *fiber.Ctx) error {
 	}
 
 	cookie := fiber.Cookie{
-		Name: "jwt",
-		Value: token,
-		Expires: time.Now().Add(time.Hour * 24),
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(time.Hour * 24),
 		HTTPOnly: true,
 	}
 
 	c.Cookie(&cookie)
 
 	return c.JSON(fiber.Map{
-		"message" : "success",
+		"message": "success",
 	})
 }
 
@@ -113,9 +113,9 @@ func User(c *fiber.Ctx) error {
 func Logout(c *fiber.Ctx) error {
 
 	cookie := fiber.Cookie{
-		Name: "jwt",
-		Value: "",
-		Expires: time.Now().Add(-time.Hour),
+		Name:     "jwt",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
 		HTTPOnly: true,
 	}
 
